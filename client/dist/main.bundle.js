@@ -20,14 +20,14 @@ webpackEmptyAsyncContext.id = "./src/$$_lazy_route_resource lazy recursive";
 /***/ "./src/app/app.component.css":
 /***/ (function(module, exports) {
 
-module.exports = ""
+module.exports = "*{\nfont-family: 'Share Tech', sans-serif;\n}\n\n.navbar {\n\nbackground-color:#363760;\ncolor:white;\n\n}\n\n"
 
 /***/ }),
 
 /***/ "./src/app/app.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<!DOCTYPE html>\n<html>\n<head>\n<!-- Latest compiled and minified CSS -->\n<link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css\">\n\n<!-- jQuery library -->\n<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js\"></script>\n\n<!-- Popper JS -->\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js\"></script>\n\n<!-- Latest compiled JavaScript -->\n<script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js\"></script>\n  <link href=\"https://fonts.googleapis.com/css?family=Share+Tech\" rel=\"stylesheet\">\n</head>\n<body>\n<nav class=\"navbar navbar-expand-sm bg-light\">\n  <h2>Tasks</h2>\n  <!-- Links -->\n  <ul class=\"navbar-nav\">\n    <li class=\"nav-item\">\n      <a class=\"nav-link\" href=\"#\"><app-header></app-header></a>\n    </li>\n    <li class=\"nav-item\">\n      <a class=\"nav-link\" href=\"#\"></a>\n    </li>\n    <li class=\"nav-item\">\n      <a class=\"nav-link\" href=\"#\"></a>\n    </li>\n  </ul>\n\n</nav>\n{{title}}\n\n\n\n<app-body>\n\t\n  \n\n</app-body>\n\n<app-footer></app-footer>\n</body>\n</html>\n\n"
+module.exports = "<!DOCTYPE html>\n<html>\n<head>\n<!-- Latest compiled and minified CSS -->\n<link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css\">\n\n<!-- jQuery library -->\n<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js\"></script>\n\n<!-- Popper JS -->\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js\"></script>\n\n<!-- Latest compiled JavaScript -->\n<script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js\"></script>\n  <link href=\"https://fonts.googleapis.com/css?family=Share+Tech\" rel=\"stylesheet\">\n</head>\n<body>\n<nav class=\"navbar navbar-expand-sm\">\n  <h2>Tasks</h2>\n  <!-- Links -->\n  <ul class=\"navbar-nav\">\n    <li class=\"nav-item\">\n      <a class=\"nav-link\" href=\"#\"></a>\n    </li>\n    <li class=\"nav-item\">\n      <a class=\"nav-link\" href=\"#\"></a>\n    </li>\n    <li class=\"nav-item\">\n      <!--<a class=\"nav-link\" href=\"#\"><app-header></app-header></a>-->\n    </li>\n  </ul>\n\n</nav>\n<div class=\"container\">\n<app-body>\n\t\n\n</app-body>\n</div>\n<app-footer></app-footer>\n</body>\n</html>\n\n"
 
 /***/ }),
 
@@ -51,8 +51,20 @@ var http_service_1 = __webpack_require__("./src/app/http.service.ts");
 var AppComponent = /** @class */ (function () {
     function AppComponent(_httpService) {
         this._httpService = _httpService;
-        this.title = 'app';
+        this.tasks = [];
     }
+    AppComponent.prototype.ngOnInit = function () {
+        this.getTasksFromService();
+    };
+    AppComponent.prototype.getTasksFromService = function () {
+        var _this = this;
+        var observable = this._httpService.getTasks();
+        // subscribe to the Observable and provide the code we would like to do with our data from the response
+        observable.subscribe(function (data) {
+            console.log("Got our tasks!", data);
+            _this.tasks = data['tasks'];
+        });
+    };
     AppComponent = __decorate([
         core_1.Component({
             selector: 'app-root',
@@ -84,10 +96,12 @@ var platform_browser_1 = __webpack_require__("./node_modules/@angular/platform-b
 var core_1 = __webpack_require__("./node_modules/@angular/core/esm5/core.js");
 var http_service_1 = __webpack_require__("./src/app/http.service.ts");
 var http_1 = __webpack_require__("./node_modules/@angular/common/esm5/http.js");
+var forms_1 = __webpack_require__("./node_modules/@angular/forms/esm5/forms.js");
 var app_component_1 = __webpack_require__("./src/app/app.component.ts");
 var header_component_1 = __webpack_require__("./src/app/header/header.component.ts");
 var footer_component_1 = __webpack_require__("./src/app/footer/footer.component.ts");
 var body_component_1 = __webpack_require__("./src/app/body/body.component.ts");
+var body_service_1 = __webpack_require__("./src/app/body.service.ts");
 var AppModule = /** @class */ (function () {
     function AppModule() {
     }
@@ -101,15 +115,59 @@ var AppModule = /** @class */ (function () {
             ],
             imports: [
                 platform_browser_1.BrowserModule,
-                http_1.HttpClientModule
+                http_1.HttpClientModule,
+                forms_1.FormsModule
             ],
-            providers: [http_service_1.HttpService],
+            providers: [
+                http_service_1.HttpService,
+                body_service_1.BodyService
+            ],
             bootstrap: [app_component_1.AppComponent]
         })
     ], AppModule);
     return AppModule;
 }());
 exports.AppModule = AppModule;
+
+
+/***/ }),
+
+/***/ "./src/app/body.service.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("./node_modules/@angular/core/esm5/core.js");
+var http_1 = __webpack_require__("./node_modules/@angular/common/esm5/http.js");
+var BodyService = /** @class */ (function () {
+    function BodyService(http) {
+        this.http = http;
+    }
+    BodyService.prototype.createOne = function (task, cb) {
+        this.http.post("/tasks", task)
+            .subscribe(function (data) { return cb(data); });
+    };
+    BodyService.prototype.getAllTasks = function (cb) {
+        this.http.get("/tasks")
+            .subscribe(function (data) { return cb(data); });
+    };
+    BodyService = __decorate([
+        core_1.Injectable(),
+        __metadata("design:paramtypes", [http_1.HttpClient])
+    ], BodyService);
+    return BodyService;
+}());
+exports.BodyService = BodyService;
 
 
 /***/ }),
@@ -124,7 +182,7 @@ module.exports = ""
 /***/ "./src/app/body/body.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<p>\n  body works!\n</p>\n"
+module.exports = "{{task | json }}\n\n<form (submit)=\"create()\">\n  <p><input type=\"text\" [(ngModel)]=\"task.title\" name=\"task.title\" id=\"title\" placeholder=\"title\"></p>\n  <p><input type=\"text\" [(ngModel)]=\"task.description\" name=\"task.description\" id=\"description\" placeholder=\"description\"></p>\n  <p>completed<input [(ngModel)]=\"task.completed\" type=\"checkbox\" name=\"task.completed\" placeholder=\"completed\"></p>\n<input type=\"submit\" value=\"create task\">  \n{{tasks | json}}\n{{tasks}}\n"
 
 /***/ }),
 
@@ -144,10 +202,29 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = __webpack_require__("./node_modules/@angular/core/esm5/core.js");
+var body_service_1 = __webpack_require__("./src/app/body.service.ts");
 var BodyComponent = /** @class */ (function () {
-    function BodyComponent() {
+    function BodyComponent(bs) {
+        this.bs = bs;
     }
     BodyComponent.prototype.ngOnInit = function () {
+        this.task = {
+            title: "",
+            description: "",
+            completed: false
+        };
+        this.all();
+    };
+    BodyComponent.prototype.create = function () {
+        this.bs.createOne(this.task, function (data) {
+            console.log(data);
+        });
+    };
+    BodyComponent.prototype.all = function () {
+        var _this = this;
+        this.bs.getAllTasks(function (data) {
+            _this.tasks = data.tasks;
+        });
     };
     BodyComponent = __decorate([
         core_1.Component({
@@ -155,7 +232,7 @@ var BodyComponent = /** @class */ (function () {
             template: __webpack_require__("./src/app/body/body.component.html"),
             styles: [__webpack_require__("./src/app/body/body.component.css")]
         }),
-        __metadata("design:paramtypes", [])
+        __metadata("design:paramtypes", [body_service_1.BodyService])
     ], BodyComponent);
     return BodyComponent;
 }());
@@ -284,52 +361,18 @@ var http_1 = __webpack_require__("./node_modules/@angular/common/esm5/http.js");
 var HttpService = /** @class */ (function () {
     function HttpService(_http) {
         this._http = _http;
-        //this.getTasks();
+        this.getTasks();
         //this.makeTasks();
         //this.getOneTask();
         //this.removeTasks();
-        this.modifyTasks();
+        //this.modifyTasks();
     }
     HttpService.prototype.getTasks = function () {
         // our http response is an Observable, store it in a variable
-        var tempObservable = this._http.get('/tasks');
+        //let tempObservable = this._http.get('/tasks');
         // subscribe to the Observable and provide the code we would like to do with our data from the response
-        tempObservable.subscribe(function (data) { return console.log("Got our tasks!", data); });
-    };
-    HttpService.prototype.makeTasks = function () {
-        var date = new Date();
-        // our http response is an Observable, store it in a variable
-        var tempObservable = this._http.post('/tasks', {
-            title: date.toString(),
-            description: date.toString(),
-            completed: true
-        });
-        // subscribe to the Observable and provide the code we would like to do with our data from the response
-        tempObservable.subscribe(function (data) { return console.log("Made our task!", data); });
-    };
-    HttpService.prototype.getOneTask = function () {
-        // our http response is an Observable, store it in a variable
-        var tempObservable = this._http.get('/tasks/5acce78b11fc934c33786296');
-        // subscribe to the Observable and provide the code we would like to do with our data from the response
-        tempObservable.subscribe(function (data) { return console.log("Got our task by ID!", data); });
-    };
-    HttpService.prototype.removeTasks = function () {
-        //let date = new Date();
-        // our http response is an Observable, store it in a variable
-        var tempObservable = this._http.delete('/tasks/5acf9cdce85403467384560f');
-        // subscribe to the Observable and provide the code we would like to do with our data from the response
-        tempObservable.subscribe(function (data) { return console.log("Made our task!", data); });
-    };
-    HttpService.prototype.modifyTasks = function () {
-        //let date = new Date();
-        // our http response is an Observable, store it in a variable
-        var tempObservable = this._http.put('/tasks/5acf9b6262471344f11d5867', {
-            title: "POOOOOOOP",
-            description: "STOOOOOOOP",
-            completed: true
-        });
-        // subscribe to the Observable and provide the code we would like to do with our data from the response
-        tempObservable.subscribe(function (data) { return console.log("Made our task!", data); });
+        //tempObservable.subscribe(data => console.log("Got our tasks!", data));
+        return this._http.get('/tasks');
     };
     HttpService = __decorate([
         core_1.Injectable(),

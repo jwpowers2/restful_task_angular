@@ -1,0 +1,22 @@
+import { Injectable, OnInit } from '@angular/core';
+import {HttpClient} from "@angular/common/http";
+
+@Injectable()
+export class BodyService implements OnInit{
+  private task:any;
+  constructor(private http:HttpClient){
+
+  }
+
+  createOne(task,cb){
+    
+    this.http.post("/tasks",task)
+    .subscribe(data=>cb(data));
+  }
+
+  getAllTasks(cb){
+  	this.http.get("/tasks")
+  	.subscribe(data=>cb(data));
+
+}
+}

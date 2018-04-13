@@ -1,3 +1,9 @@
-<p>
-  body works!
-</p>
+{{task | json }}
+
+<form (submit)="create()">
+  <p><input type="text" [(ngModel)]="task.title" name="task.title" id="title" placeholder="title"></p>
+  <p><input type="text" [(ngModel)]="task.description" name="task.description" id="description" placeholder="description"></p>
+  <p>completed<input [(ngModel)]="task.completed" type="checkbox" name="task.completed" placeholder="completed"></p>
+<input type="submit" value="create task">  
+{{tasks | json}}
+{{tasks}}
