@@ -1,9 +1,32 @@
-{{task | json }}
+<p>{{task.title}}</p>
+<p>{{task.description}}</p>
 
 <form (submit)="create()">
   <p><input type="text" [(ngModel)]="task.title" name="task.title" id="title" placeholder="title"></p>
   <p><input type="text" [(ngModel)]="task.description" name="task.description" id="description" placeholder="description"></p>
   <p>completed<input [(ngModel)]="task.completed" type="checkbox" name="task.completed" placeholder="completed"></p>
 <input type="submit" value="create task">  
-{{tasks | json}}
-{{tasks}}
+
+<table class="table table-striped">
+
+<div *ngFor="let task of tasks">
+
+<tr>
+<td>{{task.title}}</td>
+<td>{{task.description}}</td>
+<td>{{task._id}}</td>
+
+<form (submit)="destroy(task._id)">
+  <input type="submit" value="Delete">
+</form>
+</tr>
+<tr>
+<form (submit)="update(task._id)">
+<td><input type="text" [(ngModel)]="up.title" name="up.title" description="title" placeholder="title"></td>
+<td><input type="text" [(ngModel)]="up.description" name="up.description" description="description" placeholder="description"></td>
+<td><input type="checkbox" [(ngModel)]="up.completed" name="up.completed" placeholder="completed"></td>
+  <input type="submit" value="update">
+</form>
+</tr>
+</div>
+</table>

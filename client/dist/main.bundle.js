@@ -161,6 +161,14 @@ var BodyService = /** @class */ (function () {
         this.http.get("/tasks")
             .subscribe(function (data) { return cb(data); });
     };
+    BodyService.prototype.destroy = function (id, cb) {
+        this.http.delete("/tasks/" + id)
+            .subscribe(function (data) { return cb(data); });
+    };
+    BodyService.prototype.update = function (id, task, cb) {
+        this.http.put("/tasks/" + id, task)
+            .subscribe(function (data) { return cb(data); });
+    };
     BodyService = __decorate([
         core_1.Injectable(),
         __metadata("design:paramtypes", [http_1.HttpClient])
@@ -182,7 +190,7 @@ module.exports = ""
 /***/ "./src/app/body/body.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "{{task | json }}\n\n<form (submit)=\"create()\">\n  <p><input type=\"text\" [(ngModel)]=\"task.title\" name=\"task.title\" id=\"title\" placeholder=\"title\"></p>\n  <p><input type=\"text\" [(ngModel)]=\"task.description\" name=\"task.description\" id=\"description\" placeholder=\"description\"></p>\n  <p>completed<input [(ngModel)]=\"task.completed\" type=\"checkbox\" name=\"task.completed\" placeholder=\"completed\"></p>\n<input type=\"submit\" value=\"create task\">  \n{{tasks | json}}\n{{tasks}}\n"
+module.exports = "<p>{{task.title}}</p>\n<p>{{task.description}}</p>\n\n<form (submit)=\"create()\">\n  <p><input type=\"text\" [(ngModel)]=\"task.title\" name=\"task.title\" id=\"title\" placeholder=\"title\"></p>\n  <p><input type=\"text\" [(ngModel)]=\"task.description\" name=\"task.description\" id=\"description\" placeholder=\"description\"></p>\n  <p>completed<input [(ngModel)]=\"task.completed\" type=\"checkbox\" name=\"task.completed\" placeholder=\"completed\"></p>\n<input type=\"submit\" value=\"create task\">  \n\n<table class=\"table table-striped\">\n\n<div *ngFor=\"let task of tasks\">\n\n<tr>\n<td>{{task.title}}</td>\n<td>{{task.description}}</td>\n<td>{{task._id}}</td>\n\n<form (submit)=\"destroy(task._id)\">\n  <input type=\"submit\" value=\"Delete\">\n</form>\n</tr>\n<tr>\n<form (submit)=\"update(task._id)\">\n<td><input type=\"text\" [(ngModel)]=\"up.title\" name=\"up.title\" description=\"title\" placeholder=\"title\"></td>\n<td><input type=\"text\" [(ngModel)]=\"up.description\" name=\"up.description\" description=\"description\" placeholder=\"description\"></td>\n<td><input type=\"checkbox\" [(ngModel)]=\"up.completed\" name=\"up.completed\" placeholder=\"completed\"></td>\n  <input type=\"submit\" value=\"update\">\n</form>\n</tr>\n</div>\n</table>\n"
 
 /***/ }),
 
@@ -213,17 +221,38 @@ var BodyComponent = /** @class */ (function () {
             description: "",
             completed: false
         };
+        this.up = {
+            title: "",
+            description: "",
+            completed: false
+        };
         this.all();
     };
     BodyComponent.prototype.create = function () {
+        var _this = this;
         this.bs.createOne(this.task, function (data) {
             console.log(data);
+            _this.all();
         });
     };
     BodyComponent.prototype.all = function () {
         var _this = this;
         this.bs.getAllTasks(function (data) {
             _this.tasks = data.tasks;
+        });
+    };
+    BodyComponent.prototype.destroy = function (id) {
+        var _this = this;
+        this.bs.destroy(id, function (data) {
+            console.log(id);
+            _this.all();
+        });
+    };
+    BodyComponent.prototype.update = function (id) {
+        var _this = this;
+        this.bs.update(id, this.up, function (data) {
+            console.log(_this.up);
+            _this.all();
         });
     };
     BodyComponent = __decorate([

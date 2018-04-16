@@ -10,6 +10,7 @@ import { BodyService } from "../body.service";
 export class BodyComponent implements OnInit {
   private task:any;
   private tasks:any;
+  private up:any;
 
   constructor(private bs:BodyService) { 
   }
@@ -21,11 +22,17 @@ export class BodyComponent implements OnInit {
       description:"",
       completed:false
     };
+    this.up = {
+      title:"",
+      description:"",
+      completed:false
+    };
     this.all();
   }
   create(){
     this.bs.createOne(this.task,(data)=>{
       console.log(data);
+      this.all();
     });
     
   }
@@ -33,6 +40,18 @@ export class BodyComponent implements OnInit {
     this.bs.getAllTasks(data=>{
       this.tasks = data.tasks;
       
+    });
+  }
+  destroy(id){
+    this.bs.destroy(id,(data)=>{
+      console.log(id);
+      this.all();
+    });
+  }
+  update(id){
+    this.bs.update(id,this.up,(data)=>{
+      console.log(this.up);
+      this.all();
     });
   }
 }
